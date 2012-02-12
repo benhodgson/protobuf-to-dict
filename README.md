@@ -4,6 +4,10 @@ protobuf-to-dict is a small Python library for creating dicts from protocol
 buffers. It is intended to be used as an intermediate step before
 serialization (e.g. to JSON).
 
+## Installation
+
+Use `pip install protobuf-to-dict` or `python setup.py install`.
+
 ## Example
 
 Given the `google.protobuf.message.Message` subclass `MyMessage`:
