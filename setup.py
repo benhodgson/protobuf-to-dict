@@ -5,7 +5,7 @@ setup(
     description='A teeny Python library for creating Python dicts from '
         'protocol buffers. Useful as an intermediate step before '
         'serialisation (e.g. to JSON).',
-    version='0.0.1',
+    version='0.0.2',
     author='Ben Hodgson',
     author_email='ben@benhodgson.com',
     url='https://github.com/benhodgson/protobuf-to-dict',

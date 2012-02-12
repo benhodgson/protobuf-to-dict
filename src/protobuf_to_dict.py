@@ -1,6 +1,8 @@
 from google.protobuf.descriptor import FieldDescriptor
 
+
 __all__ = ["protobuf_to_dict", "TYPE_CALLABLE_MAP"]
+
 
 TYPE_CALLABLE_MAP = {
     FieldDescriptor.TYPE_DOUBLE: float,
@@ -19,15 +21,16 @@ TYPE_CALLABLE_MAP = {
     FieldDescriptor.TYPE_STRING: unicode,
     FieldDescriptor.TYPE_BYTES: lambda b: b.encode("base64"),
     FieldDescriptor.TYPE_ENUM: int,
-    FieldDescriptor.TYPE_MESSAGE: protobuf_to_dict, # recursion, bitches.
 }
+
 
 def repeated(type_callable):
     return lambda value_list: [type_callable(value) for value in value_list]
 
+
 def protobuf_to_dict(pb, type_callable_map=TYPE_CALLABLE_MAP):
     result_dict = {}
-    for field, value in protobuf.ListFields():
+    for field, value in pb.ListFields():
         if field.type not in type_callable_map:
             raise TypeError("Field %s.%s has unrecognised type id %d" % (
                 pb.__class__.__name__, field.name, field.type))
@@ -36,3 +39,7 @@ def protobuf_to_dict(pb, type_callable_map=TYPE_CALLABLE_MAP):
             type_callable = repeated(type_callable)
         result_dict[field.name] = type_callable(value)
     return result_dict
+
+
+# recursion, bitches.
+TYPE_CALLABLE_MAP[FieldDescriptor.TYPE_MESSAGE] = protobuf_to_dict
