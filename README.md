@@ -29,7 +29,7 @@ string.
 
 If you want to override this behaviour, you may do so by passing
 `protobuf_to_dict` a dictionary of protobuf types to callables via the
-`type_callable_map`, kwarg:
+`type_callable_map` kwarg:
 
     >>> from copy import copy
     >>> from google.protobuf.descriptor import FieldDescriptor
