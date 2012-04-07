@@ -8,7 +8,7 @@ setup(
     version='0.0.5',
     author='Ben Hodgson',
     author_email='ben@benhodgson.com',
-    url='https://github.com/benhodgson/protobuf-to-dict',
+    url='https://github.com/Livefyre/protobuf-to-dict',
     license='Public Domain',
     keywords=['protobuf', 'json', 'dict'],
     install_requires=['protobuf>=2.3.0'],
