@@ -93,12 +93,12 @@ def _dict_to_protobuf(pb, value, type_callable_map, ignore_missing):
             for item in v:
                 if field_type == FieldDescriptor.TYPE_MESSAGE:
                     m = getattr(pb, k).add()
-                    _dict_to_protobuf(m, item, type_callable_map)
+                    _dict_to_protobuf(m, item, type_callable_map, ignore_missing)
                 else:
                     getattr(pb, k).append(item)
             continue
         if field_type == FieldDescriptor.TYPE_MESSAGE:
-            _dict_to_protobuf(getattr(pb, k), v, type_callable_map)
+            _dict_to_protobuf(getattr(pb, k), v, type_callable_map, ignore_missing)
             continue
 
         type_callable_map[field_type](pb, k, v)
