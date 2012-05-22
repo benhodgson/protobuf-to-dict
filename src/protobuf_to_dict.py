@@ -75,14 +75,20 @@ REVERSE_TYPE_CALLABLE_MAP = {
     FieldDescriptor.TYPE_ENUM: setattr,
 }
 
-def dict_to_protobuf(pb, value, type_callable_map=REVERSE_TYPE_CALLABLE_MAP):
-    return _dict_to_protobuf(pb(), value, type_callable_map)
+def dict_to_protobuf(pb, value, type_callable_map=REVERSE_TYPE_CALLABLE_MAP, ignore_missing=False):
+    return _dict_to_protobuf(pb(), value, type_callable_map, ignore_missing)
 
-def _dict_to_protobuf(pb, value, type_callable_map):
+def _dict_to_protobuf(pb, value, type_callable_map, ignore_missing):
     desc = pb.DESCRIPTOR
     
     for k, v in value.items():
+        if k not in desc.fields_by_name:
+            if ignore_missing:
+                 continue
+            else:
+                raise KeyError("%s does not have a field called %s" % (pb, k))
         field_type = desc.fields_by_name[k].type
+        
         if desc.fields_by_name[k].label == FieldDescriptor.LABEL_REPEATED:
             for item in v:
                 if field_type == FieldDescriptor.TYPE_MESSAGE:
