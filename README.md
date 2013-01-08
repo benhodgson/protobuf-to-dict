@@ -12,12 +12,14 @@ Use `pip install protobuf-to-dict` or `python setup.py install`.
 
 Given the `google.protobuf.message.Message` subclass `MyMessage`:
 
-    >>> from protobuf_to_dict import protobuf_to_dict
-    >>> my_message = MyMessage()
-    >>> # pb_my_message is a protobuf string
-    >>> my_message.ParseFromString(pb_my_message)
-    >>> protobuf_to_dict(my_message)
-    {'message': 'Hello'}
+```python
+>>> from protobuf_to_dict import protobuf_to_dict
+>>> my_message = MyMessage()
+>>> # pb_my_message is a protobuf string
+>>> my_message.ParseFromString(pb_my_message)
+>>> protobuf_to_dict(my_message)
+{'message': 'Hello'}
+```
 
 ## Caveats
 
@@ -31,21 +33,25 @@ If you want to override this behaviour, you may do so by passing
 `protobuf_to_dict` a dictionary of protobuf types to callables via the
 `type_callable_map` kwarg:
 
-    >>> from copy import copy
-    >>> from google.protobuf.descriptor import FieldDescriptor
-    >>> from protobuf_to_dict import protobuf_to_dict, TYPE_CALLABLE_MAP
-    >>>
-    >>> type_callable_map = copy(TYPE_CALLABLE_MAP)
-    >>> # convert TYPE_BYTES to a Python bytestring
-    >>> type_callable_map[FieldDescriptor.TYPE_BYTES] = str
-    >>>
-    >>> # my_message is a google.protobuf.message.Message instance
-    >>> protobuf_to_dict(my_message, type_callable_map=type_callable_map)
+```python
+>>> from copy import copy
+>>> from google.protobuf.descriptor import FieldDescriptor
+>>> from protobuf_to_dict import protobuf_to_dict, TYPE_CALLABLE_MAP
+>>>
+>>> type_callable_map = copy(TYPE_CALLABLE_MAP)
+>>> # convert TYPE_BYTES to a Python bytestring
+>>> type_callable_map[FieldDescriptor.TYPE_BYTES] = str
+>>>
+>>> # my_message is a google.protobuf.message.Message instance
+>>> protobuf_to_dict(my_message, type_callable_map=type_callable_map)
+```
 
 By default, the integer representation is used for enum values. To use their
 string labels instead, pass `use_enum_labels=True` into `protobuf_to_dict`:
 
-    >>> protobuf_to_dict(my_message, use_enum_labels=True)
+```python
+>>> protobuf_to_dict(my_message, use_enum_labels=True)
+```
 
 ## Author
 
