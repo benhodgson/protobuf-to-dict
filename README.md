@@ -42,6 +42,11 @@ If you want to override this behaviour, you may do so by passing
     >>> # my_message is a google.protobuf.message.Message instance
     >>> protobuf_to_dict(my_message, type_callable_map=type_callable_map)
 
+By default, enums are handled as integers. If you want to get its label, pass enum_as_labels=True
+to protobuf_to_dict:
+
+    >>> protobuf_to_dict(my_message, enum_as_labels=True)
+
 ## Author
 
 protobuf-to-dict is written and maintained by [Ben Hodgson](http://benhodgson.com/).
