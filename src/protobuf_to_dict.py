@@ -40,11 +40,11 @@ def protobuf_to_dict(pb, type_callable_map=TYPE_CALLABLE_MAP, use_enum_labels=Fa
             type_callable = lambda pb: protobuf_to_dict(pb,
                 type_callable_map=type_callable_map,
                 use_enum_labels=use_enum_labels)
-        elif field.type not in type_callable_map:
-            raise TypeError("Field %s.%s has unrecognised type id %d" % (
-                pb.__class__.__name__, field.name, field.type))
-        else:
+        elif field.type in type_callable_map:
             type_callable = type_callable_map[field.type]
+        else:
+            raise TypeError("Field %s.%s has unrecognised type id %d" % (
+                pb.__class__.__name__, field.name, field.type))    
         if use_enum_labels and field.type == FieldDescriptor.TYPE_ENUM:
             type_callable = lambda value: enum_label_name(field, value)
         if field.label == FieldDescriptor.LABEL_REPEATED:
