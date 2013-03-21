@@ -53,6 +53,20 @@ string labels instead, pass `use_enum_labels=True` into `protobuf_to_dict`:
 >>> protobuf_to_dict(my_message, use_enum_labels=True)
 ```
 
+## Unit testing
+
+Tests are under `src/tests/`.
+
+```sh
+$ python setup.py nosetests
+```
+
+To regenerate `src/tests/sample_pb2.py`:
+
+```sh
+$ protoc --python_out=src -Isrc src/tests/sample.proto 
+```
+
 ## Author
 
 protobuf-to-dict is written and maintained by [Ben Hodgson](http://benhodgson.com/).

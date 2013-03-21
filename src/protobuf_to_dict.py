@@ -75,16 +75,30 @@ REVERSE_TYPE_CALLABLE_MAP = {
     FieldDescriptor.TYPE_ENUM: setattr,
 }
 
-def dict_to_protobuf(pb, value, type_callable_map=REVERSE_TYPE_CALLABLE_MAP, ignore_missing=False):
-    return _dict_to_protobuf(pb(), value, type_callable_map, ignore_missing)
+def dict_to_protobuf(pb_klass_or_instance, values, type_callable_map=REVERSE_TYPE_CALLABLE_MAP, strict=True):
+    """Populates a protobuf model from a dictionary.
+    
+    :param pb_klass_or_instance: a protobuf message class, or an protobuf instance
+    :type pb_klass_or_instance: a type or instance of a subclass of google.protobuf.message.Message
+    :param dict values: a dictionary of values. Repeated and nested values are 
+       fully supported.
+    :param dict type_callable_map: a mapping of protobuf types to callables for setting
+       values on the target instance.
+    :param bool strict: complain if keys in the map are not fields on the message.
+    """
+    if isinstance(pb_klass_or_instance, Message):
+        instance = pb_klass_or_instance
+    else:
+        instance = pb_klass_or_instance()
+    return _dict_to_protobuf(instance, values, type_callable_map, strict)
 
-def _dict_to_protobuf(pb, value, type_callable_map, ignore_missing):
+def _dict_to_protobuf(pb, value, type_callable_map, strict):
     desc = pb.DESCRIPTOR
     
     for k, v in value.items():
         if k not in desc.fields_by_name:
-            if ignore_missing:
-                 continue
+            if not strict:
+                continue
             else:
                 raise KeyError("%s does not have a field called %s" % (pb, k))
         field_type = desc.fields_by_name[k].type
@@ -93,12 +107,12 @@ def _dict_to_protobuf(pb, value, type_callable_map, ignore_missing):
             for item in v:
                 if field_type == FieldDescriptor.TYPE_MESSAGE:
                     m = getattr(pb, k).add()
-                    _dict_to_protobuf(m, item, type_callable_map, ignore_missing)
+                    _dict_to_protobuf(m, item, type_callable_map, strict)
                 else:
                     getattr(pb, k).append(item)
             continue
         if field_type == FieldDescriptor.TYPE_MESSAGE:
-            _dict_to_protobuf(getattr(pb, k), v, type_callable_map, ignore_missing)
+            _dict_to_protobuf(getattr(pb, k), v, type_callable_map, strict)
             continue
 
         type_callable_map[field_type](pb, k, v)

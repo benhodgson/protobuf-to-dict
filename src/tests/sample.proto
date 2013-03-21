@@ -1,0 +1,36 @@
+package tests;
+
+// protoc --python_out=src -Isrc src/tests/sample.proto
+
+message MessageOfTypes {
+
+	required double dubl = 1;
+	required float flot = 2;
+	required int32 i32 = 3;
+	required int64 i64 = 4;
+	required uint32 ui32 = 5;
+	required uint64 ui64 = 6;
+	required sint32 si32 = 7;
+	required sint64 si64 = 8;
+	required fixed32 f32 = 9;
+	required fixed64 f64 = 17; // oops, OOO
+	required sfixed32 sf32 = 10;
+	required sfixed64 sf64 = 11;
+	required bool bol = 12;
+	required string strng = 13;
+	required bytes byts = 14;
+	required NestedType nested = 15;
+	required Enum enm = 16;
+	repeated int32 range = 18;
+	repeated NestedType nestedRepeated = 19;
+
+	message NestedType {
+		required string req = 1;
+	}
+
+	enum Enum {
+		A = 0;
+		B = 1;
+		C = 2;
+	}
+}
