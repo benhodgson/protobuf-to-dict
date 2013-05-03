@@ -9,11 +9,27 @@ from google.protobuf import descriptor_pb2
 
 
 DESCRIPTOR = descriptor.FileDescriptor(
-  name='tests/sample.proto',
+  name='sample.proto',
   package='tests',
-  serialized_pb='\n\x12tests/sample.proto\x12\x05tests\"\xba\x03\n\x0eMessageOfTypes\x12\x0c\n\x04\x64ubl\x18\x01 \x02(\x01\x12\x0c\n\x04\x66lot\x18\x02 \x02(\x02\x12\x0b\n\x03i32\x18\x03 \x02(\x05\x12\x0b\n\x03i64\x18\x04 \x02(\x03\x12\x0c\n\x04ui32\x18\x05 \x02(\r\x12\x0c\n\x04ui64\x18\x06 \x02(\x04\x12\x0c\n\x04si32\x18\x07 \x02(\x11\x12\x0c\n\x04si64\x18\x08 \x02(\x12\x12\x0b\n\x03\x66\x33\x32\x18\t \x02(\x07\x12\x0b\n\x03\x66\x36\x34\x18\x11 \x02(\x06\x12\x0c\n\x04sf32\x18\n \x02(\x0f\x12\x0c\n\x04sf64\x18\x0b \x02(\x10\x12\x0b\n\x03\x62ol\x18\x0c \x02(\x08\x12\r\n\x05strng\x18\r \x02(\t\x12\x0c\n\x04\x62yts\x18\x0e \x02(\x0c\x12\x30\n\x06nested\x18\x0f \x02(\x0b\x32 .tests.MessageOfTypes.NestedType\x12\'\n\x03\x65nm\x18\x10 \x02(\x0e\x32\x1a.tests.MessageOfTypes.Enum\x12\r\n\x05range\x18\x12 \x03(\x05\x12\x38\n\x0enestedRepeated\x18\x13 \x03(\x0b\x32 .tests.MessageOfTypes.NestedType\x1a\x19\n\nNestedType\x12\x0b\n\x03req\x18\x01 \x02(\t\"\x1b\n\x04\x45num\x12\x05\n\x01\x41\x10\x00\x12\x05\n\x01\x42\x10\x01\x12\x05\n\x01\x43\x10\x02')
+  serialized_pb='\n\x0csample.proto\x12\x05tests\"\xc4\x03\n\x0eMessageOfTypes\x12\x0c\n\x04\x64ubl\x18\x01 \x02(\x01\x12\x0c\n\x04\x66lot\x18\x02 \x02(\x02\x12\x0b\n\x03i32\x18\x03 \x02(\x05\x12\x0b\n\x03i64\x18\x04 \x02(\x03\x12\x0c\n\x04ui32\x18\x05 \x02(\r\x12\x0c\n\x04ui64\x18\x06 \x02(\x04\x12\x0c\n\x04si32\x18\x07 \x02(\x11\x12\x0c\n\x04si64\x18\x08 \x02(\x12\x12\x0b\n\x03\x66\x33\x32\x18\t \x02(\x07\x12\x0b\n\x03\x66\x36\x34\x18\x11 \x02(\x06\x12\x0c\n\x04sf32\x18\n \x02(\x0f\x12\x0c\n\x04sf64\x18\x0b \x02(\x10\x12\x0b\n\x03\x62ol\x18\x0c \x02(\x08\x12\r\n\x05strng\x18\r \x02(\t\x12\x0c\n\x04\x62yts\x18\x0e \x02(\x0c\x12\x30\n\x06nested\x18\x0f \x02(\x0b\x32 .tests.MessageOfTypes.NestedType\x12\'\n\x03\x65nm\x18\x10 \x02(\x0e\x32\x1a.tests.MessageOfTypes.Enum\x12\r\n\x05range\x18\x12 \x03(\x05\x12\x38\n\x0enestedRepeated\x18\x13 \x03(\x0b\x32 .tests.MessageOfTypes.NestedType\x1a\x19\n\nNestedType\x12\x0b\n\x03req\x18\x01 \x02(\t\"\x1b\n\x04\x45num\x12\x05\n\x01\x41\x10\x00\x12\x05\n\x01\x42\x10\x01\x12\x05\n\x01\x43\x10\x02*\x08\x08\x64\x10\x80\x80\x80\x80\x02\"\x84\x01\n\x0fNestedExtension2%\n\x06\x65xtInt\x12\x15.tests.MessageOfTypes\x18\x66 \x01(\x05\x32J\n\textNested\x12\x15.tests.MessageOfTypes\x18g \x01(\x0b\x32 .tests.MessageOfTypes.NestedType:(\n\textDouble\x12\x15.tests.MessageOfTypes\x18\x64 \x01(\x01:(\n\textString\x12\x15.tests.MessageOfTypes\x18\x65 \x01(\t')
 
 
+EXTDOUBLE_FIELD_NUMBER = 100
+extDouble = descriptor.FieldDescriptor(
+  name='extDouble', full_name='tests.extDouble', index=0,
+  number=100, type=1, cpp_type=5, label=1,
+  has_default_value=False, default_value=0,
+  message_type=None, enum_type=None, containing_type=None,
+  is_extension=True, extension_scope=None,
+  options=None)
+EXTSTRING_FIELD_NUMBER = 101
+extString = descriptor.FieldDescriptor(
+  name='extString', full_name='tests.extString', index=1,
+  number=101, type=9, cpp_type=9, label=1,
+  has_default_value=False, default_value=unicode("", "utf-8"),
+  message_type=None, enum_type=None, containing_type=None,
+  is_extension=True, extension_scope=None,
+  options=None)
 
 _MESSAGEOFTYPES_ENUM = descriptor.EnumDescriptor(
   name='Enum',
@@ -36,8 +52,8 @@ _MESSAGEOFTYPES_ENUM = descriptor.EnumDescriptor(
   ],
   containing_type=None,
   options=None,
-  serialized_start=445,
-  serialized_end=472,
+  serialized_start=439,
+  serialized_end=466,
 )
 
 
@@ -64,8 +80,8 @@ _MESSAGEOFTYPES_NESTEDTYPE = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=418,
-  serialized_end=443,
+  serialized_start=412,
+  serialized_end=437,
 )
 
 _MESSAGEOFTYPES = descriptor.Descriptor(
@@ -216,10 +232,45 @@ _MESSAGEOFTYPES = descriptor.Descriptor(
     _MESSAGEOFTYPES_ENUM,
   ],
   options=None,
+  is_extendable=True,
+  extension_ranges=[(100, 536870912), ],
+  serialized_start=24,
+  serialized_end=476,
+)
+
+
+_NESTEDEXTENSION = descriptor.Descriptor(
+  name='NestedExtension',
+  full_name='tests.NestedExtension',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+    descriptor.FieldDescriptor(
+      name='extInt', full_name='tests.NestedExtension.extInt', index=0,
+      number=102, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=True, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='extNested', full_name='tests.NestedExtension.extNested', index=1,
+      number=103, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=True, extension_scope=None,
+      options=None),
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=30,
-  serialized_end=472,
+  serialized_start=479,
+  serialized_end=611,
 )
 
 _MESSAGEOFTYPES_NESTEDTYPE.containing_type = _MESSAGEOFTYPES;
@@ -228,6 +279,7 @@ _MESSAGEOFTYPES.fields_by_name['enm'].enum_type = _MESSAGEOFTYPES_ENUM
 _MESSAGEOFTYPES.fields_by_name['nestedRepeated'].message_type = _MESSAGEOFTYPES_NESTEDTYPE
 _MESSAGEOFTYPES_ENUM.containing_type = _MESSAGEOFTYPES;
 DESCRIPTOR.message_types_by_name['MessageOfTypes'] = _MESSAGEOFTYPES
+DESCRIPTOR.message_types_by_name['NestedExtension'] = _NESTEDEXTENSION
 
 class MessageOfTypes(message.Message):
   __metaclass__ = reflection.GeneratedProtocolMessageType
@@ -241,4 +293,15 @@ class MessageOfTypes(message.Message):
   
   # @@protoc_insertion_point(class_scope:tests.MessageOfTypes)
 
+class NestedExtension(message.Message):
+  __metaclass__ = reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _NESTEDEXTENSION
+  
+  # @@protoc_insertion_point(class_scope:tests.NestedExtension)
+
+MessageOfTypes.RegisterExtension(extDouble)
+MessageOfTypes.RegisterExtension(extString)
+MessageOfTypes.RegisterExtension(_NESTEDEXTENSION.extensions_by_name['extInt'])
+_NESTEDEXTENSION.extensions_by_name['extNested'].message_type = _MESSAGEOFTYPES_NESTEDTYPE
+MessageOfTypes.RegisterExtension(_NESTEDEXTENSION.extensions_by_name['extNested'])
 # @@protoc_insertion_point(module_scope)

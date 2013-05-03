@@ -3,6 +3,7 @@ package tests;
 // protoc --python_out=src -Isrc src/tests/sample.proto
 
 message MessageOfTypes {
+    extensions 100 to max;
 
 	required double dubl = 1;
 	required float flot = 2;
@@ -33,4 +34,16 @@ message MessageOfTypes {
 		B = 1;
 		C = 2;
 	}
+}
+
+extend MessageOfTypes {
+    optional double extDouble = 100;
+    optional string extString = 101;
+}
+
+message NestedExtension {
+    extend MessageOfTypes {
+        optional int32 extInt = 102;
+        optional MessageOfTypes.NestedType extNested = 103;
+    }
 }
