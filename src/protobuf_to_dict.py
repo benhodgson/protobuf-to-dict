@@ -5,6 +5,9 @@ from google.protobuf.descriptor import FieldDescriptor
 __all__ = ["protobuf_to_dict", "TYPE_CALLABLE_MAP", "dict_to_protobuf", "REVERSE_TYPE_CALLABLE_MAP"]
 
 
+EXTENSION_CONTAINER = '___X'
+
+
 TYPE_CALLABLE_MAP = {
     FieldDescriptor.TYPE_DOUBLE: float,
     FieldDescriptor.TYPE_FLOAT: float,
@@ -35,49 +38,52 @@ def enum_label_name(field, value):
 
 def protobuf_to_dict(pb, type_callable_map=TYPE_CALLABLE_MAP, use_enum_labels=False):
     result_dict = {}
+    extensions = {}
     for field, value in pb.ListFields():
-        if field.type == FieldDescriptor.TYPE_MESSAGE:
-            # recursively encode protobuf sub-message
-            type_callable = lambda pb: protobuf_to_dict(pb,
-                type_callable_map=type_callable_map,
-                use_enum_labels=use_enum_labels)
-        elif field.type in type_callable_map:
-            type_callable = type_callable_map[field.type]
-        else:
-            raise TypeError("Field %s.%s has unrecognised type id %d" % (
-                pb.__class__.__name__, field.name, field.type))    
-        if use_enum_labels and field.type == FieldDescriptor.TYPE_ENUM:
-            type_callable = lambda value: enum_label_name(field, value)
+        type_callable = _get_field_value_adaptor(pb, field, type_callable_map, use_enum_labels)
         if field.label == FieldDescriptor.LABEL_REPEATED:
             type_callable = repeated(type_callable)
+
+        if field.is_extension:
+            extensions[str(field.number)] = type_callable(value)
+            continue
+
         result_dict[field.name] = type_callable(value)
+
+    if extensions:
+        result_dict[EXTENSION_CONTAINER] = extensions
     return result_dict
 
-def set_bytes(pb, field, value):
-    setattr(pb, field, value.decode('base64'))
+
+def _get_field_value_adaptor(pb, field, type_callable_map=TYPE_CALLABLE_MAP, use_enum_labels=False):
+    if field.type == FieldDescriptor.TYPE_MESSAGE:
+        # recursively encode protobuf sub-message
+        return lambda pb: protobuf_to_dict(pb,
+            type_callable_map=type_callable_map,
+            use_enum_labels=use_enum_labels)
+
+    if use_enum_labels and field.type == FieldDescriptor.TYPE_ENUM:
+        return lambda value: enum_label_name(field, value)
+
+    if field.type in type_callable_map:
+        return type_callable_map[field.type]
+
+    raise TypeError("Field %s.%s has unrecognised type id %d" % (
+        pb.__class__.__name__, field.name, field.type))
+
+
+def get_bytes(value):
+    return value.decode('base64')
+
 
 REVERSE_TYPE_CALLABLE_MAP = {
-    FieldDescriptor.TYPE_DOUBLE: setattr,
-    FieldDescriptor.TYPE_FLOAT: setattr,
-    FieldDescriptor.TYPE_INT32: setattr,
-    FieldDescriptor.TYPE_INT64: setattr,
-    FieldDescriptor.TYPE_UINT32: setattr,
-    FieldDescriptor.TYPE_UINT64: setattr,
-    FieldDescriptor.TYPE_SINT32: setattr,
-    FieldDescriptor.TYPE_SINT64: setattr,
-    FieldDescriptor.TYPE_FIXED32: setattr,
-    FieldDescriptor.TYPE_FIXED64: setattr,
-    FieldDescriptor.TYPE_SFIXED32: setattr,
-    FieldDescriptor.TYPE_SFIXED64: setattr,
-    FieldDescriptor.TYPE_BOOL: setattr,
-    FieldDescriptor.TYPE_STRING: setattr,
-    FieldDescriptor.TYPE_BYTES: set_bytes,
-    FieldDescriptor.TYPE_ENUM: setattr,
+    FieldDescriptor.TYPE_BYTES: get_bytes,
 }
+
 
 def dict_to_protobuf(pb_klass_or_instance, values, type_callable_map=REVERSE_TYPE_CALLABLE_MAP, strict=True):
     """Populates a protobuf model from a dictionary.
-    
+
     :param pb_klass_or_instance: a protobuf message class, or an protobuf instance
     :type pb_klass_or_instance: a type or instance of a subclass of google.protobuf.message.Message
     :param dict values: a dictionary of values. Repeated and nested values are 
@@ -92,29 +98,58 @@ def dict_to_protobuf(pb_klass_or_instance, values, type_callable_map=REVERSE_TYP
         instance = pb_klass_or_instance()
     return _dict_to_protobuf(instance, values, type_callable_map, strict)
 
+
+def _get_field_mapping(pb, dict_value, strict):
+    field_mapping = []
+    for key, value in dict_value.items():
+        if key == EXTENSION_CONTAINER:
+            continue
+        if key not in pb.DESCRIPTOR.fields_by_name:
+            if strict:
+                raise KeyError("%s does not have a field called %s" % (pb, key))
+            continue
+        field_mapping.append((pb.DESCRIPTOR.fields_by_name[key], value, getattr(pb, key, None)))
+
+    for ext_num, ext_val in dict_value.get(EXTENSION_CONTAINER, {}).items():
+        try:
+            ext_num = int(ext_num)
+        except ValueError:
+            raise ValueError("Extension keys must be integers.")
+        if ext_num not in pb._extensions_by_number:
+            if strict:
+                raise KeyError("%s does not have a extension with number %s. Perhaps you forgot to import it?" % (pb, key))
+            continue
+        ext_field = pb._extensions_by_number[ext_num]
+        pb_val = None
+        pb_val = pb.Extensions[ext_field]
+        field_mapping.append((ext_field, ext_val, pb_val))
+
+    return field_mapping
+
+
 def _dict_to_protobuf(pb, value, type_callable_map, strict):
-    desc = pb.DESCRIPTOR
-    
-    for k, v in value.items():
-        if k not in desc.fields_by_name:
-            if not strict:
-                continue
-            else:
-                raise KeyError("%s does not have a field called %s" % (pb, k))
-        field_type = desc.fields_by_name[k].type
-        
-        if desc.fields_by_name[k].label == FieldDescriptor.LABEL_REPEATED:
-            for item in v:
-                if field_type == FieldDescriptor.TYPE_MESSAGE:
-                    m = getattr(pb, k).add()
+    fields = _get_field_mapping(pb, value, strict)
+
+    for field, input_value, pb_value in fields:
+        if field.label == FieldDescriptor.LABEL_REPEATED:
+            for item in input_value:
+                if field.type == FieldDescriptor.TYPE_MESSAGE:
+                    m = pb_value.add()
                     _dict_to_protobuf(m, item, type_callable_map, strict)
                 else:
-                    getattr(pb, k).append(item)
+                    pb_value.append(item)
             continue
-        if field_type == FieldDescriptor.TYPE_MESSAGE:
-            _dict_to_protobuf(getattr(pb, k), v, type_callable_map, strict)
+        if field.type == FieldDescriptor.TYPE_MESSAGE:
+            _dict_to_protobuf(pb_value, input_value, type_callable_map, strict)
             continue
 
-        type_callable_map[field_type](pb, k, v)
-    
+        if field.type in type_callable_map:
+            input_value = type_callable_map[field.type](input_value)
+
+        if field.is_extension:
+            pb.Extensions[field] = input_value
+            continue
+
+        setattr(pb, field.name, input_value)
+
     return pb
