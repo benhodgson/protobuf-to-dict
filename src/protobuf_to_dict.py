@@ -150,6 +150,12 @@ def _dict_to_protobuf(pb, value, type_callable_map, strict):
             pb.Extensions[field] = input_value
             continue
 
+        if field.type == FieldDescriptor.TYPE_ENUM and isinstance(input_value, basestring):
+            enum_dict = field.enum_type.values_by_name
+            try:
+                input_value = enum_dict[input_value].number
+            except KeyError:
+                raise KeyError("`%s` is not a valid value for field `%s`" % (input_value, field.name))
         setattr(pb, field.name, input_value)
 
     return pb

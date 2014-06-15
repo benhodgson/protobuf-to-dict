@@ -21,7 +21,11 @@ class Test(unittest.TestCase):
         self.compare(m, d, ['enm', 'nestedRepeated'])
         assert d['enm'] == 'C'
 
-        with nose.tools.assert_raises(TypeError):
+        m2 = dict_to_protobuf(MessageOfTypes, d)
+        assert m == m2
+
+        d['enm'] = 'MEOW'
+        with nose.tools.assert_raises(KeyError):
             dict_to_protobuf(MessageOfTypes, d)
 
     def test_nested_repeated(self):
