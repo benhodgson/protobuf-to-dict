@@ -136,6 +136,8 @@ def _dict_to_protobuf(pb, value, type_callable_map, strict):
                 if field.type == FieldDescriptor.TYPE_MESSAGE:
                     m = pb_value.add()
                     _dict_to_protobuf(m, item, type_callable_map, strict)
+                elif field.type == FieldDescriptor.TYPE_ENUM and isinstance(item, basestring):
+                    pb_value.append(_string_to_enum(field, item))
                 else:
                     pb_value.append(item)
             continue
@@ -150,6 +152,17 @@ def _dict_to_protobuf(pb, value, type_callable_map, strict):
             pb.Extensions[field] = input_value
             continue
 
+        if field.type == FieldDescriptor.TYPE_ENUM and isinstance(input_value, basestring):
+            input_value = _string_to_enum(field, input_value)
+
         setattr(pb, field.name, input_value)
 
     return pb
+
+def _string_to_enum(field, input_value):
+    enum_dict = field.enum_type.values_by_name
+    try:
+        input_value = enum_dict[input_value].number
+    except KeyError:
+        raise KeyError("`%s` is not a valid value for field `%s`" % (input_value, field.name))
+    return input_value

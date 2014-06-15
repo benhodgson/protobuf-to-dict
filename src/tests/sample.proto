@@ -24,6 +24,7 @@ message MessageOfTypes {
 	required Enum enm = 16;
 	repeated int32 range = 18;
 	repeated NestedType nestedRepeated = 19;
+	repeated Enum enmRepeated = 20;
 
 	message NestedType {
 		required string req = 1;

@@ -18,10 +18,36 @@ class Test(unittest.TestCase):
     def test_use_enum_labels(self):
         m = self.populate_MessageOfTypes()
         d = protobuf_to_dict(m, use_enum_labels=True)
-        self.compare(m, d, ['enm', 'nestedRepeated'])
+        self.compare(m, d, ['enm', 'enmRepeated', 'nestedRepeated'])
         assert d['enm'] == 'C'
+        assert d['enmRepeated'] == ['A', 'C']
 
-        with nose.tools.assert_raises(TypeError):
+        m2 = dict_to_protobuf(MessageOfTypes, d)
+        assert m == m2
+
+        d['enm'] = 'MEOW'
+        with nose.tools.assert_raises(KeyError):
+            dict_to_protobuf(MessageOfTypes, d)
+
+        d['enm'] = 'A'
+        d['enmRepeated'] = ['B']
+        dict_to_protobuf(MessageOfTypes, d)
+
+        d['enmRepeated'] = ['CAT']
+        with nose.tools.assert_raises(KeyError):
+            dict_to_protobuf(MessageOfTypes, d)
+
+    def test_repeated_enum(self):
+        m = self.populate_MessageOfTypes()
+        d = protobuf_to_dict(m, use_enum_labels=True)
+        self.compare(m, d, ['enm', 'enmRepeated', 'nestedRepeated'])
+        assert d['enmRepeated'] == ['A', 'C']
+
+        m2 = dict_to_protobuf(MessageOfTypes, d)
+        assert m == m2
+
+        d['enmRepeated'] = ['MEOW']
+        with nose.tools.assert_raises(KeyError):
             dict_to_protobuf(MessageOfTypes, d)
 
     def test_nested_repeated(self):
@@ -87,6 +113,7 @@ class Test(unittest.TestCase):
         assert len(m.byts) == 3, len(m.byts)
         m.nested.req = "req"
         m.enm = MessageOfTypes.C #@UndefinedVariable
+        m.enmRepeated.extend([MessageOfTypes.A, MessageOfTypes.C])
         m.range.extend(range(10))
         return m
 
