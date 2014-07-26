@@ -67,9 +67,14 @@ To regenerate `src/tests/sample_pb2.py`:
 $ protoc --python_out=src -Isrc src/tests/sample.proto 
 ```
 
-## Author
+## Authors
 
-protobuf-to-dict is written and maintained by [Ben Hodgson](http://benhodgson.com/).
+protobuf-to-dict is written and maintained by
+[Ben Hodgson](http://benhodgson.com/), with significant contributions from
+[Nino Walker](https://github.com/ninowalker),
+[Jonathan Klaassen](https://github.com/jaklaassen), and
+[Tristram Gräbener](http://blog.tristramg.eu/).
+
 
 ## (Un)license
 
